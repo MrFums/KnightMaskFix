@@ -1,40 +1,39 @@
-﻿using SPTarkov.DI.Annotations;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.DI.Annotations;
 using SPTarkov.Server.Core.DI;
-using SPTarkov.Server.Core.Models.Spt.Mod;
-using SPTarkov.Server.Core.Models.Utils;
-using SPTarkov.Server.Core.Services;
+using SPTarkov.Server.Core.Models.Spt.Tables;
 
-namespace FaceTheKnightMaskFix;
+namespace KnightMaskFix;
 
-[Injectable(TypePriority = OnLoadOrder.PostDBModLoader + 1)]
+[Injectable(TypePriority = int.MaxValue)]
 public class MaskFixPlugin(
     ISptLogger<MaskFixPlugin> logger,
-    DatabaseService databaseService)
+    TemplateTable templateTable)
     : IOnLoad
 {
     private const string KnightMaskId = "62963c18dbc8ab5f0d382d0b";
 
-    public Task OnLoad()
+    public Task OnLoadAsync(CancellationToken cancellationToken)
     {
         FixKnightMask();
-        logger.Success("[Face the Knight - Mask Fix] Loaded successfully!");
+        logger.Success("[KnightMaskFix] Loaded successfully!");
         return Task.CompletedTask;
     }
 
     private void FixKnightMask()
     {
-        var items = databaseService.GetItems();
+        var items = templateTable.Items;
 
         if (items.TryGetValue(KnightMaskId, out var mask) && mask?.Properties?.Prefab != null)
         {
             mask.Properties.Prefab.Path = "maskfix.bundle";
             mask.Properties.Prefab.Rcid = "";
 
-            logger.Success($"[Face the Knight] Successfully repointed {KnightMaskId} to maskfix.bundle");
+            logger.Success($"[KnightMaskFix] Successfully repointed {KnightMaskId} to maskfix.bundle");
         }
         else
         {
-            logger.Error("[Face the Knight] Could not find Knight mask or Prefab object in database!");
+            logger.Error("[KnightMaskFix] Could not find Knight mask or Prefab object in database!");
         }
     }
 }
