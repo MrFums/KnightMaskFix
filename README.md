@@ -1,4 +1,4 @@
-# Fums - Knight Mask Fix (SPT v4.1.16+)
+# Fums - Knight Mask Fix (SPT v4.1.3+)
 
 **Fixes the missing "Death Knight mask" model on all in-game character models.**
 
